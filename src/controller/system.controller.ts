@@ -1,7 +1,9 @@
 import { EventService } from "@/app/event/event.service";
+import { IsPublic } from "@/common/decorator/is-public.decorator";
 import core from "@nestia/core";
 import { Controller } from "@nestjs/common";
 
+@IsPublic()
 @Controller("system")
 export class SystemController {
     constructor(private readonly eventClient: EventService) {}
