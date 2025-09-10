@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
             if (!typia.is<{ user: Pick<User, "id">; iss: "classum" }>(payload)) throw new UnauthorizedException(ErrorMessage.InvalidToken);
 
             const user = await this.mainDb.getRepository(UserEntity).findOne({ where: { id: payload.user.id } });
-            if (user === null) throw new UnauthorizedException(ErrorMessage.InvalidToken);
+            if (user === null || user.status !== "active") throw new UnauthorizedException(ErrorMessage.InvalidToken);
             return user.toUser();
         } catch (err: unknown) {
             if (err instanceof jwt.TokenExpiredError) throw new UnauthorizedException(ErrorMessage.ExpiredToken);

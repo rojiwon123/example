@@ -8,7 +8,7 @@ export class UsersController {
     constructor(private readonly userService: UserService) {}
 
     @core.TypedRoute.Get(":userId")
-    async getUser(@core.TypedParam("userId") userId: string): Promise<GetPublicUserDTO> {
+    async fineOne(@core.TypedParam("userId") userId: string): Promise<GetPublicUserDTO> {
         const user = await this.userService.getUser({ userId });
         return { user };
     }

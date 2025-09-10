@@ -1,4 +1,4 @@
-import { PublicUser, User } from "@/app/user/user.type";
+import { PublicUser, User, UserStatus } from "@/app/user/user.type";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { CommonEntity } from "./common.entity";
 
@@ -6,6 +6,9 @@ import { CommonEntity } from "./common.entity";
 export class UserEntity extends CommonEntity {
     @PrimaryGeneratedColumn({ type: "bigint" })
     id!: string;
+
+    @Column({ name: "status", type: "varchar", length: 20 })
+    status!: UserStatus;
 
     @Column({ type: "varchar", nullable: false })
     password!: string;
@@ -25,6 +28,7 @@ export class UserEntity extends CommonEntity {
     toUser(): User {
         return {
             id: this.id,
+            status: this.status,
             profileUrl: this.profileUrl,
             email: this.email,
             name: { first: this.firstName, last: this.lastName },
@@ -37,6 +41,7 @@ export class UserEntity extends CommonEntity {
     toPublicUser(): PublicUser {
         return {
             id: this.id,
+            status: this.status,
             profileUrl: this.profileUrl,
             name: { first: this.firstName, last: this.lastName },
             createdAt: this.createdAt.toISOString(),

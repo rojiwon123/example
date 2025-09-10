@@ -8,6 +8,7 @@
     "main": "build/main",
     "scripts": {
         "--------------------runner----------------": "",
+        "start": "npm run build && NODE_ENV=development MODE=main node build/main",
         "start:main": "NODE_ENV=development MODE=main nodemon",
         "start:worker": "NODE_ENV=development MODE=worker nodemon",
         "--------------------build-----------------": "",

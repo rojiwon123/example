@@ -8,7 +8,7 @@ import { UserEntity } from "@/entity/user.entity";
 import { MainDBToken } from "@/infrastructure/db/token";
 import { ConflictException, Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import * as jwt from "jsonwebtoken";
-import { DataSource } from "typeorm";
+import { DataSource, LessThan } from "typeorm";
 import typia from "typia";
 
 @Injectable()
@@ -71,15 +71,25 @@ export class AuthService {
     }
 
     async signUp(input: Pick<UserEntity, "email" | "password" | "profileUrl" | "firstName" | "lastName">) {
-        const { affectedRows = 0 } = await this.mainDb.query<{ affectedRows?: number }>(
-            `
-            INSERT INTO users (email, password, profileUrl, firstName, lastName)
-            SELECT ?, ?, ?, ?, ?
-            WHERE NOT EXISTS (SELECT 1 FROM users WHERE email = ?)
-            `,
-            [input.email, input.password, input.profileUrl, input.firstName, input.lastName, input.email],
+        const user = await this.mainDb.getRepository(UserEntity).findOne({ where: { email: input.email }, withDeleted: true });
+        if (user !== null) throw new ConflictException("이미 사용 중인 이메일입니다.");
+        const newUser = await this.mainDb.getRepository(UserEntity).save(
+            this.mainDb.getRepository(UserEntity).create({
+                email: input.email,
+                password: input.password,
+                profileUrl: input.profileUrl,
+                firstName: input.firstName,
+                lastName: input.lastName,
+                status: "pending",
+            }),
         );
-        if (affectedRows < 1) throw new ConflictException("이미 사용 중인 이메일입니다.");
+        const firstUser = await this.mainDb.getRepository(UserEntity).findOne({ where: { email: input.email, id: LessThan(newUser.id) } });
+        if (firstUser) {
+            await this.mainDb.getRepository(UserEntity).delete({ id: newUser.id });
+            throw new ConflictException("이미 사용 중인 이메일입니다.");
+        }
+        await this.mainDb.getRepository(UserEntity).update({ id: newUser.id, status: "pending" }, { status: "active" });
+        return;
     }
 
     async signIn(input: Pick<UserEntity, "email" | "password">) {
