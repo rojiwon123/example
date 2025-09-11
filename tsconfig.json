@@ -74,7 +74,8 @@
             { "transform": "typescript-transform-paths" },
             { "transform": "typescript-transform-paths", "afterDeclarations": true },
             { "transform": "typia/lib/transform" },
-            { "transform": "@nestia/core/lib/transform", "validate": "assertEquals" }
+            { "transform": "@nestia/core/lib/transform", "validate": "assertEquals" },
+            { "transform": "@nestia/sdk/lib/transform" }
         ],
 
         /* Interop Constraints */
