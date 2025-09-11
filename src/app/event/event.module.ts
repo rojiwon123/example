@@ -1,4 +1,5 @@
 import { config } from "@/common/config";
+import { MilliSec } from "@/common/util/time";
 import { Global, Module } from "@nestjs/common";
 import { ClientsModule, Transport } from "@nestjs/microservices";
 import { EventService } from "./event.service";
@@ -12,7 +13,12 @@ import { WorkerToken } from "./token";
                 name: WorkerToken,
                 useFactory: async () => ({
                     transport: Transport.REDIS,
-                    options: { host: config().WORKER_HOST, port: Number(config().WORKER_PORT) },
+                    options: {
+                        host: config().WORKER_HOST,
+                        port: Number(config().WORKER_PORT),
+                        retryAttempts: Infinity,
+                        retryDelay: MilliSec.ONE_SEC * 5,
+                    },
                 }),
             },
         ]),

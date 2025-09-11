@@ -1,5 +1,6 @@
 import { config } from "@/common/config";
 import { logger } from "@/common/logger/logger";
+import { MilliSec } from "@/common/util/time";
 import { WorkerModule } from "@/consumer/worker.module";
 import { NestFactory } from "@nestjs/core";
 import { MicroserviceOptions, Transport } from "@nestjs/microservices";
@@ -20,6 +21,8 @@ export const bootstrap = async () => {
         options: {
             host: config().WORKER_HOST,
             port: Number(config().WORKER_PORT),
+            retryAttempts: Infinity,
+            retryDelay: MilliSec.ONE_SEC * 5,
         },
     });
     await app.startAllMicroservices();
