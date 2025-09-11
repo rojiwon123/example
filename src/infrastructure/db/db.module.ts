@@ -17,7 +17,7 @@ import { MainDBToken } from "./token";
                     port: Number(DB_PORT),
                     username: DB_USERNAME,
                     password: DB_PASSWORD,
-                    database: "classum",
+                    database: "main",
                     entities: [path.resolve(__dirname + "/../../entity/**/*.entity{.ts,.js}")],
                     synchronize: true,
                 }).initialize();

@@ -33,14 +33,10 @@ export class AuthService {
                     updatedAt: user.updatedAt,
                 },
                 exp: accessExp.getTime(),
-                iss: "classum",
             },
             config().ACCESS_TOKEN_KEY,
         );
-        const refreshToken = jwt.sign(
-            { refreshTokenId: tokenEntity.id, exp: refreshExp.getTime(), iss: "classum" },
-            config().REFRESH_TOKEN_KEY,
-        );
+        const refreshToken = jwt.sign({ refreshTokenId: tokenEntity.id, exp: refreshExp.getTime() }, config().REFRESH_TOKEN_KEY);
         return {
             accessToken: {
                 token: accessToken,
@@ -56,7 +52,7 @@ export class AuthService {
     private async verifyRefreshToken(refreshToken: string): Promise<{ user: User; refreshTokenId: string }> {
         try {
             const payload = jwt.verify(refreshToken, config().REFRESH_TOKEN_KEY);
-            if (!typia.is<{ refreshTokenId: string; iss: "classum" }>(payload)) throw new UnauthorizedException(ErrorMessage.InvalidToken);
+            if (!typia.is<{ refreshTokenId: string }>(payload)) throw new UnauthorizedException(ErrorMessage.InvalidToken);
             const token = await this.mainDb.getRepository(RefreshTokenEntity).findOne({ where: { id: payload.refreshTokenId } });
             if (token === null) throw new UnauthorizedException(ErrorMessage.InvalidToken);
             if (Date.now() > token.expiredAt.getTime()) throw new UnauthorizedException(ErrorMessage.ExpiredToken);

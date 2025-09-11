@@ -21,7 +21,7 @@ export class AuthGuard implements CanActivate {
     private async verifyAccessToken(accessToken: string): Promise<User> {
         try {
             const payload = jwt.verify(accessToken, config().ACCESS_TOKEN_KEY);
-            if (!typia.is<{ user: Pick<User, "id">; iss: "classum" }>(payload)) throw new UnauthorizedException(ErrorMessage.InvalidToken);
+            if (!typia.is<{ user: Pick<User, "id"> }>(payload)) throw new UnauthorizedException(ErrorMessage.InvalidToken);
 
             const user = await this.mainDb.getRepository(UserEntity).findOne({ where: { id: payload.user.id } });
             if (user === null || user.status !== "active") throw new UnauthorizedException(ErrorMessage.InvalidToken);
