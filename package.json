@@ -13,6 +13,7 @@
         "start:worker": "NODE_ENV=development MODE=worker nodemon",
         "--------------------build-----------------": "",
         "build": "rimraf ./build && tsc -p ./tsconfig.build.json",
+        "build:doc": "rimraf ./doc/openapi/openapi.json && nestia swagger",
         "--------------------init------------------": "",
         "check": "ts-patch check",
         "prepare": "ts-patch install && typia patch",

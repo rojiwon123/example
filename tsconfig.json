@@ -106,5 +106,9 @@
 
         /* Completeness */
         "skipLibCheck": true
+    },
+    "ts-node": {
+        "files": true,
+        "project": "./tsconfig.build.json"
     }
 }
