@@ -37,8 +37,6 @@ services:
                 condition: service_started
             redis:
                 condition: service_started
-            migration:
-                condition: service_completed_successfully
 
     worker-server:
         build: .
@@ -61,5 +59,3 @@ services:
                 condition: service_started
             redis:
                 condition: service_started
-            migration:
-                condition: service_completed_successfully
