@@ -3,10 +3,8 @@
 dist
 build
 tbuild
-packages/sdk/lib
-openapi.json
-packages/doc/version/*
-/sdk
+doc/openapi/openapi.json
+doc/erd/ERD.md
 # Logs
 logs
 *.log

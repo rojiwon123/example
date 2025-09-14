@@ -2,7 +2,7 @@ import { WorkerEvent } from "@/common/event/event";
 import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { lastValueFrom } from "rxjs";
-import { WorkerToken } from "./token";
+import { WorkerToken } from "./event.token";
 
 @Injectable()
 export class EventService implements OnModuleInit, OnModuleDestroy {

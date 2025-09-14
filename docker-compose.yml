@@ -1,0 +1,65 @@
+services:
+    mysql:
+        image: mysql:8.0-bookworm
+        environment:
+            MYSQL_DB: main
+            MYSQL_USER: admin
+            MYSQL_PASSWORD: 1234
+            MYSQL_ROOT_PASSWORD: 1234
+        ports:
+            - "3306:3306"
+
+    redis:
+        image: redis:8-bookworm
+        ports:
+            - "6379:6379"
+
+    main-server:
+        build: .
+        env_file:
+            - .env.example
+        environment:
+            NODE_ENV: ${NODE_ENV:-development}
+            MODE: main
+            DB_HOST: mysql
+            DB_PORT: 3306
+            DB_USERNAME: admin
+            DB_PASSWORD: 1234
+            WORKER_HOST: redis
+            WORKER_PORT: 6379
+            LOG_LEVEL: INFO
+            ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
+            REFRESH_TOKEN_KEY: ${REFRESH_TOKEN_KEY}
+        ports:
+            - "4000:4000"
+        depends_on:
+            mysql:
+                condition: service_started
+            redis:
+                condition: service_started
+            migration:
+                condition: service_completed_successfully
+
+    worker-server:
+        build: .
+        env_file:
+            - .env.example
+        environment:
+            NODE_ENV: ${NODE_ENV:-development}
+            MODE: main
+            DB_HOST: mysql
+            DB_PORT: 3306
+            DB_USERNAME: admin
+            DB_PASSWORD: 1234
+            WORKER_HOST: redis
+            WORKER_PORT: 6379
+            LOG_LEVEL: INFO
+            ACCESS_TOKEN_KEY: ${ACCESS_TOKEN_KEY}
+            REFRESH_TOKEN_KEY: ${REFRESH_TOKEN_KEY}
+        depends_on:
+            mysql:
+                condition: service_started
+            redis:
+                condition: service_started
+            migration:
+                condition: service_completed_successfully

@@ -9,11 +9,21 @@ import { Controller } from "@nestjs/common";
 export class MeController {
     constructor(private readonly userService: UserService) {}
 
+    /**
+     * @summary 내정보 조회
+     * @tag me
+     * @security bearer
+     */
     @core.TypedRoute.Get("profile")
     async getProfile(@Viewer() viewer: User): Promise<GetProfileDTO> {
         return { user: viewer };
     }
 
+    /**
+     * @summary 내 정보 수정
+     * @tag me
+     * @security bearer
+     */
     @core.TypedRoute.Put("profile")
     async updateProfile(@Viewer() viewer: User, @core.TypedBody() body: UpdateProfileDTO): Promise<null> {
         await this.userService.upadateUser(viewer, body);

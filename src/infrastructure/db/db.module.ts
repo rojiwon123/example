@@ -1,16 +1,17 @@
-import { config } from "@/common/config";
+import { ConfigToken } from "@config/config.factory";
+import { Config } from "@config/config.type";
 import { Global, Module } from "@nestjs/common";
 import path from "path";
 import { DataSource } from "typeorm";
-import { MainDBToken } from "./token";
+import { MainDBToken } from "./db.token";
 
 @Global()
 @Module({
     providers: [
         {
             provide: MainDBToken,
-            useFactory: () => {
-                const { DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME } = config();
+            inject: [ConfigToken],
+            useFactory: ({ DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME }: Config) => {
                 return new DataSource({
                     type: "mysql",
                     host: DB_HOST,

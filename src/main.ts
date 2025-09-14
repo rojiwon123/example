@@ -1,16 +1,12 @@
-import { config } from "@/common/config";
-import { logger } from "@/common/logger/logger";
+import { Config } from "@config/config.type";
+import typia from "typia";
 import { bootstrap } from "./bootstrap";
 
 export const main = async () => {
-    const env = config();
-    try {
-        if (env.MODE === "main") await bootstrap.main(env);
-        if (env.MODE === "worker") await bootstrap.worker();
-    } catch (error: unknown) {
-        logger("fatal")("fail to bootstrap", error);
-        throw error;
-    }
+    typia.assertGuard<Config["MODE"]>(process.env["MODE"]);
+    const mode = process.env["MODE"];
+    if (mode === "main") await bootstrap.main();
+    if (mode === "worker") await bootstrap.worker();
 };
 
 void main();

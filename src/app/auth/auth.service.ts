@@ -1,11 +1,12 @@
 import { User } from "@/app/user/user.type";
-import { config } from "@/common/config";
 import { ErrorMessage } from "@/common/error/message";
 import { OmitKeyof } from "@/common/util/omit.type";
 import { MilliSec } from "@/common/util/time";
 import { RefreshTokenEntity } from "@/entity/refresh-token.entity";
 import { UserEntity } from "@/entity/user.entity";
-import { MainDBToken } from "@/infrastructure/db/token";
+import { ConfigToken } from "@config/config.factory";
+import { Config } from "@config/config.type";
+import { MainDBToken } from "@db/db.token";
 import { ConflictException, Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import * as jwt from "jsonwebtoken";
 import { DataSource, LessThan } from "typeorm";
@@ -13,7 +14,10 @@ import typia from "typia";
 
 @Injectable()
 export class AuthService {
-    constructor(@Inject(MainDBToken) private readonly mainDb: DataSource) {}
+    constructor(
+        @Inject(MainDBToken) private readonly mainDb: DataSource,
+        @Inject(ConfigToken) private readonly config: Config,
+    ) {}
 
     private async createTokens(user: OmitKeyof<User, "email">) {
         await this.mainDb.getRepository(RefreshTokenEntity).softDelete({ userId: user.id });
@@ -34,9 +38,9 @@ export class AuthService {
                 },
                 exp: accessExp.getTime(),
             },
-            config().ACCESS_TOKEN_KEY,
+            this.config.ACCESS_TOKEN_KEY,
         );
-        const refreshToken = jwt.sign({ refreshTokenId: tokenEntity.id, exp: refreshExp.getTime() }, config().REFRESH_TOKEN_KEY);
+        const refreshToken = jwt.sign({ refreshTokenId: tokenEntity.id, exp: refreshExp.getTime() }, this.config.REFRESH_TOKEN_KEY);
         return {
             accessToken: {
                 token: accessToken,
@@ -51,7 +55,7 @@ export class AuthService {
 
     private async verifyRefreshToken(refreshToken: string): Promise<{ user: User; refreshTokenId: string }> {
         try {
-            const payload = jwt.verify(refreshToken, config().REFRESH_TOKEN_KEY);
+            const payload = jwt.verify(refreshToken, this.config.REFRESH_TOKEN_KEY);
             if (!typia.is<{ refreshTokenId: string }>(payload)) throw new UnauthorizedException(ErrorMessage.InvalidToken);
             const token = await this.mainDb.getRepository(RefreshTokenEntity).findOne({ where: { id: payload.refreshTokenId } });
             if (token === null) throw new UnauthorizedException(ErrorMessage.InvalidToken);

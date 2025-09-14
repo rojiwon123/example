@@ -1,7 +1,7 @@
 import { User } from "@/app/user/user.type";
 import { ErrorMessage } from "@/common/error/message";
 import { UserEntity } from "@/entity/user.entity";
-import { MainDBToken } from "@/infrastructure/db/token";
+import { MainDBToken } from "@db/db.token";
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { DataSource } from "typeorm";
 

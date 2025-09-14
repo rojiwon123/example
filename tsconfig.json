@@ -31,7 +31,12 @@
         "moduleResolution": "Node10",
         // "moduleSuffix": [],
         // "noResolve": false,
-        "paths": { "@/*": ["./src/*"] },
+        "paths": {
+            "@logger/*": ["./src/infrastructure/logger/*"],
+            "@db/*": ["./src/infrastructure/db/*"],
+            "@config/*": ["./src/infrastructure/config/*"],
+            "@/*": ["./src/*"]
+        },
         "resolveJsonModule": true,
         // "resolvePackageJsonExports": false,
         // "resolvePackageJsonImports": false,

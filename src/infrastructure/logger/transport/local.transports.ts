@@ -1,8 +1,7 @@
-import winston from "winston";
-
-import { LogLevel } from "@/common/logger/log-level.type";
+import { LogLevel } from "@logger/log-level.type";
 import { isString } from "fp-ts/lib/string";
 import util from "util";
+import winston from "winston";
 
 const inspectOptions = ({ level, colors }: { level: string; colors: boolean }): util.InspectOptions => {
     switch (level) {

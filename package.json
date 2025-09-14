@@ -13,7 +13,7 @@
         "start:worker": "NODE_ENV=development MODE=worker nodemon",
         "--------------------build-----------------": "",
         "build": "rimraf ./build && tsc -p ./tsconfig.build.json",
-        "build:doc": "rimraf ./doc/openapi/openapi.json && nestia swagger",
+        "build:api": "rimraf ./doc/openapi/openapi.json && nestia swagger",
         "--------------------init------------------": "",
         "check": "ts-patch check",
         "prepare": "ts-patch install && typia patch",
@@ -25,6 +25,7 @@
     "dependencies": {
         "@nestia/core": "^8.0.7",
         "@nestjs/common": "^10.4.20",
+        "@nestjs/config": "^4.0.2",
         "@nestjs/core": "^10.4.20",
         "@nestjs/microservices": "^10.4.20",
         "@nestjs/platform-express": "^10.4.20",

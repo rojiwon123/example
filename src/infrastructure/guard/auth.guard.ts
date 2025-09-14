@@ -1,9 +1,10 @@
 import { User } from "@/app/user/user.type";
-import { config } from "@/common/config";
 import { IS_PUBLIC_KEY } from "@/common/decorator/is-public.decorator";
 import { ErrorMessage } from "@/common/error/message";
 import { UserEntity } from "@/entity/user.entity";
-import { MainDBToken } from "@/infrastructure/db/token";
+import { ConfigToken } from "@config/config.factory";
+import { Config } from "@config/config.type";
+import { MainDBToken } from "@db/db.token";
 import { CanActivate, ExecutionContext, ForbiddenException, Inject, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from "express";
@@ -15,12 +16,13 @@ import typia from "typia";
 export class AuthGuard implements CanActivate {
     constructor(
         private reflector: Reflector,
+        @Inject(ConfigToken) private readonly config: Config,
         @Inject(MainDBToken) private readonly mainDb: DataSource,
     ) {}
 
     private async verifyAccessToken(accessToken: string): Promise<User> {
         try {
-            const payload = jwt.verify(accessToken, config().ACCESS_TOKEN_KEY);
+            const payload = jwt.verify(accessToken, this.config.ACCESS_TOKEN_KEY);
             if (!typia.is<{ user: Pick<User, "id"> }>(payload)) throw new UnauthorizedException(ErrorMessage.InvalidToken);
 
             const user = await this.mainDb.getRepository(UserEntity).findOne({ where: { id: payload.user.id } });

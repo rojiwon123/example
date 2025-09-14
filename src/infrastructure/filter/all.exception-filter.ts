@@ -1,11 +1,14 @@
-import { logger } from "@/common/logger/logger";
+import { Logger } from "@logger/logger.service";
 import * as nest from "@nestjs/common";
 import { HttpAdapterHost } from "@nestjs/core";
 import { Response } from "express";
 
 @nest.Catch()
 export class AllExceptionFilter implements nest.ExceptionFilter {
-    constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+    constructor(
+        private readonly httpAdapterHost: HttpAdapterHost,
+        private readonly logger: Logger,
+    ) {}
 
     catch(exception: unknown, host: nest.ArgumentsHost) {
         const hostType = host.getType();
@@ -14,7 +17,7 @@ export class AllExceptionFilter implements nest.ExceptionFilter {
             const res = ctx.getResponse<Response>();
             if (this.isHttpException(exception))
                 return this.httpAdapterHost.httpAdapter.reply(res, exception.message, exception.getStatus());
-            logger("fatal")("catch unknown exception", exception);
+            this.logger.fatal("catch unknown exception", exception);
             return this.httpAdapterHost.httpAdapter.reply(res, "INTERNAL_SERVER_ERROR", 500);
         }
         if (hostType === "rpc") {
@@ -22,7 +25,7 @@ export class AllExceptionFilter implements nest.ExceptionFilter {
             const event = ctx.getData();
             const context = ctx.getContext();
 
-            logger("error")("worker error", exception, event, context);
+            this.logger.error("worker error", exception, event, context);
             throw exception;
         }
     }
