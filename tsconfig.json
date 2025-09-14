@@ -32,6 +32,7 @@
         // "moduleSuffix": [],
         // "noResolve": false,
         "paths": {
+            "@event/*": ["./src/infrastructure/event/*"],
             "@logger/*": ["./src/infrastructure/logger/*"],
             "@db/*": ["./src/infrastructure/db/*"],
             "@config/*": ["./src/infrastructure/config/*"],

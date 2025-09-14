@@ -1,5 +1,5 @@
 import { IsPublic } from "@/common/decorator/is-public.decorator";
-import { EventService } from "@/infrastructure/event/event.service";
+import { EventService } from "@event/event.service";
 import core from "@nestia/core";
 import { Controller } from "@nestjs/common";
 

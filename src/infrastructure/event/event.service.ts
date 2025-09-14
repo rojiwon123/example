@@ -1,4 +1,4 @@
-import { WorkerEvent } from "@/common/event/event";
+import { WorkerEvent } from "@event/event.type";
 import { Inject, Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { lastValueFrom } from "rxjs";

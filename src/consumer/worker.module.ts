@@ -1,9 +1,6 @@
 import { AppModule } from "@/app/app.module";
-import { UserConsumer } from "@/consumer/user.consumer";
 import { Module } from "@nestjs/common";
+import { WorkerEventConsumer } from "./worker-event.consumer";
 
-@Module({
-    imports: [AppModule],
-    controllers: [UserConsumer],
-})
+@Module({ imports: [AppModule], controllers: [WorkerEventConsumer] })
 export class WorkerModule {}
