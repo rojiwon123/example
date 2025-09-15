@@ -11,7 +11,7 @@ import { MainDBToken } from "./db.token";
         {
             provide: MainDBToken,
             inject: [ConfigToken],
-            useFactory: ({ DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME }: Config) => {
+            useFactory: ({ DB_HOST, DB_PASSWORD, DB_PORT, DB_USERNAME, MODE }: Config) => {
                 return new DataSource({
                     type: "mysql",
                     host: DB_HOST,
@@ -20,7 +20,7 @@ import { MainDBToken } from "./db.token";
                     password: DB_PASSWORD,
                     database: "main",
                     entities: [path.resolve(__dirname + "/../../entity/**/*.entity{.ts,.js}")],
-                    synchronize: true,
+                    synchronize: MODE === "main",
                 }).initialize();
             },
         },

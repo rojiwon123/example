@@ -8,11 +8,21 @@ services:
             MYSQL_ROOT_PASSWORD: 1234
         ports:
             - "3306:3306"
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+            timeout: 20s
+            retries: 10
+            interval: 5s
 
     redis:
         image: redis:8-bookworm
         ports:
             - "6379:6379"
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            timeout: 20s
+            retries: 5
+            interval: 3s
 
     main-server:
         build: .
@@ -34,9 +44,9 @@ services:
             - "4000:4000"
         depends_on:
             mysql:
-                condition: service_started
+                condition: service_healthy
             redis:
-                condition: service_started
+                condition: service_healthy
 
     worker-server:
         build: .
@@ -56,6 +66,6 @@ services:
             REFRESH_TOKEN_KEY: ${REFRESH_TOKEN_KEY}
         depends_on:
             mysql:
-                condition: service_started
+                condition: service_healthy
             redis:
-                condition: service_started
+                condition: service_healthy
